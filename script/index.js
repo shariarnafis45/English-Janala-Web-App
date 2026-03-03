@@ -3,31 +3,61 @@
 const loadLessons = () => {
   fetch("https://openapi.programming-hero.com/api/levels/all")
     .then((res) => res.json())
-    .then((json) => displayLevels(json.data) );
+    .then((json) => displayLevels(json.data));
 };
 
-// Remove active class fromlesson btn 
+// Remove active class fromlesson btn
 const removeActive = () => {
-  const lessonBtn = document.querySelectorAll('.lesson-btn');
-  lessonBtn.forEach(btn => {
-    btn.classList.remove('active');
-  })
-
-}
+  const lessonBtn = document.querySelectorAll(".lesson-btn");
+  lessonBtn.forEach((btn) => {
+    btn.classList.remove("active");
+  });
+};
 
 // words by api
 const loadWords = (id) => {
   const url = `https://openapi.programming-hero.com/api/level/${id}`;
   fetch(url)
     .then((res) => res.json())
-    .then((json) =>{
+    .then((json) => {
       removeActive();
       const lessonBtn = document.getElementById(`lesson-btn-${id}`);
-      lessonBtn.classList.add('active');
-      displayWords(json.data)
-      
-      
+      lessonBtn.classList.add("active");
+      displayWords(json.data);
     });
+};
+
+// Word deatils
+const loadWordDetails = async (id) => {
+  const url = `https://openapi.programming-hero.com/api/word/${id}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  displayWordDetails(data.data);
+};
+
+// Display Word Deatails
+const displayWordDetails = (deatils) => {
+  const detaiilsContainer = document.getElementById("word-details-container");
+  detaiilsContainer.innerHTML = `
+      <h2 class="font-bold text-2xl font-bangla">${deatils.word} (<i class="fa-solid fa-microphone-lines"></i>:${deatils.pronunciation})</h2>
+            <div>
+              <h3 class="font-medium text-xl">Meaning</h3>
+              <p class="font-bangla">${deatils.meaning}</p>
+            </div>
+            <div>
+              <h3 class="font-medium text-xl">Example</h3>
+              <p>${deatils.sentence}</p>
+            </div>
+            <div class="space-y-2">
+              <h3 class="font-medium text-xl font-bangla">সমার্থক শব্দ গুলো</h3>
+              <div class="flex gap-3">
+                <span class="btn btn-soft">${deatils.synonyms[0]}</span>
+                <span class="btn btn-soft">${deatils.synonyms[1]}</span>
+                <span class="btn btn-soft">${deatils.synonyms[2]}</span>
+              </div>
+            </div>
+  `;
+  document.getElementById("wordDetailsModal").showModal();
 };
 
 const displayWords = (words) => {
@@ -52,7 +82,7 @@ const displayWords = (words) => {
                 <p class="font-medium  text-[0.9rem]">Meaning /Pronounciation</p>
                 <div class="font-bangla  text-3xl font-semibold text-gray-600">"${word.meaning ? word.meaning : "Meaning Not Found"} / ${word.pronunciation ? word.pronunciation : "Pronunciation Not Found"}"</div>
                 <div class="icon-container flex justify-between mt-7">
-                    <button onclick="my_modal_5.showModal()" class="btn btn-soft btn-primary"><i class="fa-solid fa-circle-info"></i></button>
+                    <button onclick="loadWordDetails(${word.id})" class="btn btn-soft btn-primary"><i class="fa-solid fa-circle-info"></i></button>
                     <button class="btn btn-soft btn-primary"><i class="fa-solid fa-volume-high"></i></button>
                 
                 </div>
