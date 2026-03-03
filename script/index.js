@@ -3,20 +3,35 @@
 const loadLessons = () => {
   fetch("https://openapi.programming-hero.com/api/levels/all")
     .then((res) => res.json())
-    .then((json) => displayLevels(json.data));
+    .then((json) => displayLevels(json.data) );
 };
+
+// Remove active class fromlesson btn 
+const removeActive = () => {
+  const lessonBtn = document.querySelectorAll('.lesson-btn');
+  lessonBtn.forEach(btn => {
+    btn.classList.remove('active');
+  })
+
+}
 
 // words by api
 const loadWords = (id) => {
   const url = `https://openapi.programming-hero.com/api/level/${id}`;
   fetch(url)
     .then((res) => res.json())
-    .then((json) => displayWords(json.data));
+    .then((json) =>{
+      removeActive();
+      const lessonBtn = document.getElementById(`lesson-btn-${id}`);
+      lessonBtn.classList.add('active');
+      displayWords(json.data)
+      
+      
+    });
 };
 
 const displayWords = (words) => {
   const wordsContainer = document.getElementById("word-container");
-
   wordsContainer.innerHTML = "";
   if (words.length === 0) {
     wordsContainer.innerHTML = `
@@ -37,7 +52,7 @@ const displayWords = (words) => {
                 <p class="font-medium  text-[0.9rem]">Meaning /Pronounciation</p>
                 <div class="font-bangla  text-3xl font-semibold text-gray-600">"${word.meaning ? word.meaning : "Meaning Not Found"} / ${word.pronunciation ? word.pronunciation : "Pronunciation Not Found"}"</div>
                 <div class="icon-container flex justify-between mt-7">
-                    <button class="btn btn-soft btn-primary"><i class="fa-solid fa-circle-info"></i></button>
+                    <button onclick="my_modal_5.showModal()" class="btn btn-soft btn-primary"><i class="fa-solid fa-circle-info"></i></button>
                     <button class="btn btn-soft btn-primary"><i class="fa-solid fa-volume-high"></i></button>
                 
                 </div>
@@ -57,7 +72,7 @@ const displayLevels = (lessons) => {
     // create btn for all lesson
     const btnDiv = document.createElement("div");
     btnDiv.innerHTML = `
-            <button onclick="loadWords(${lesson.level_no})" class="btn btn-outline btn-primary">
+            <button id="lesson-btn-${lesson.level_no}" onclick="loadWords(${lesson.level_no})" class="btn btn-outline btn-primary lesson-btn">
                 <i class="fa-solid fa-book-open"></i> Lesson - ${lesson.level_no}
             </button>
         `;
