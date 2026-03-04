@@ -148,6 +148,32 @@
         id="lessons-container"
         class="flex justify-center gap-6 mt-8 flex-wrap"
       ></div>
+      <!-- Search  -->
+      <div class="join flex justify-center mt-10 ">
+        <div>
+          <label class="input validator join-item ">
+            
+              <g
+                stroke-linejoin="round"
+                stroke-linecap="round"
+                stroke-width="2.5"
+                fill="none"
+                stroke="currentColor"
+              >
+                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              </g>
+            </svg>
+            <input id="search-input" type="text" placeholder="Search Vocabularies" required />
+          </label>
+          <div class="validator-hint hidden">Enter your word</div>
+        </div>
+        <button id="search-btn" class="btn btn-primary join-item">Search</button>
+      </div>
+      <!-- Spin  -->
+      <div id="spinner" class="hidden flex justify-center items-center pt-28">
+        <span class="loading loading-dots loading-xl"></span>
+      </div>
       <div
         id="word-container"
         class="bg-base-300 w-11/12 mx-auto my-10 p-7 grid md:grid-cols-3 sm:grid-cols-2 gap-8 rounded-sm"
@@ -167,9 +193,7 @@
 
       <dialog id="wordDetailsModal" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box">
-          <div id="word-details-container" class="space-y-8">
-            
-          </div>
+          <div id="word-details-container" class="space-y-8"></div>
           <div class="modal-action">
             <form method="dialog">
               <!-- if there is a button in form, it will close the modal -->

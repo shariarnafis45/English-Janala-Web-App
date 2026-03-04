@@ -1,3 +1,26 @@
+// Spinner Controll
+const controllSpinner = (value) => {
+  if (value) {
+    document.getElementById("spinner").classList.remove("hidden");
+    document.getElementById("word-container").classList.add("hidden");
+  } else {
+    document.getElementById("word-container").classList.remove("hidden");
+    document.getElementById("spinner").classList.add("hidden");
+  }
+};
+// Speak Words
+function pronounceWord(word) {
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = "en-EN"; // English
+  window.speechSynthesis.speak(utterance);
+}
+// create element from array
+
+const createElement = (arr) => {
+  const element = arr.map((el) => `<span class="btn">${el}</span>`);
+  return element.join(" ");
+};
+
 // Function => lessons button load
 
 const loadLessons = () => {
@@ -16,6 +39,7 @@ const removeActive = () => {
 
 // words by api
 const loadWords = (id) => {
+  controllSpinner(true);
   const url = `https://openapi.programming-hero.com/api/level/${id}`;
   fetch(url)
     .then((res) => res.json())
@@ -51,9 +75,7 @@ const displayWordDetails = (deatils) => {
             <div class="space-y-2">
               <h3 class="font-medium text-xl font-bangla">সমার্থক শব্দ গুলো</h3>
               <div class="flex gap-3">
-                <span class="btn btn-soft">${deatils.synonyms[0]}</span>
-                <span class="btn btn-soft">${deatils.synonyms[1]}</span>
-                <span class="btn btn-soft">${deatils.synonyms[2]}</span>
+                ${createElement(deatils.synonyms)}
               </div>
             </div>
   `;
@@ -72,6 +94,7 @@ const displayWords = (words) => {
           </div>
     
     `;
+    controllSpinner(false);
     return;
   }
   words.forEach((word) => {
@@ -83,7 +106,7 @@ const displayWords = (words) => {
                 <div class="font-bangla  text-3xl font-semibold text-gray-600">"${word.meaning ? word.meaning : "Meaning Not Found"} / ${word.pronunciation ? word.pronunciation : "Pronunciation Not Found"}"</div>
                 <div class="icon-container flex justify-between mt-7">
                     <button onclick="loadWordDetails(${word.id})" class="btn btn-soft btn-primary"><i class="fa-solid fa-circle-info"></i></button>
-                    <button class="btn btn-soft btn-primary"><i class="fa-solid fa-volume-high"></i></button>
+                    <button onclick="pronounceWord('${word.word}')" class="btn btn-soft btn-primary"><i class="fa-solid fa-volume-high"></i></button>
                 
                 </div>
 
@@ -91,6 +114,7 @@ const displayWords = (words) => {
         `;
     wordsContainer.append(wordCard);
   });
+  controllSpinner(false);
 };
 
 const displayLevels = (lessons) => {
@@ -112,3 +136,23 @@ const displayLevels = (lessons) => {
 };
 
 loadLessons();
+
+// Search function
+document.getElementById("search-btn").addEventListener("click", () => {
+  const input = document.getElementById("search-input");
+  const inputValue = input.value.trim().toLowerCase();
+  if (inputValue.length === 0) {
+    return;
+  }
+  // data by API
+  fetch("https://openapi.programming-hero.com/api/words/all")
+    .then((res) => res.json())
+    .then((data) => {
+      const words = data.data;
+      const filterWords = words.filter((word) =>
+        word.word.toLowerCase().includes(inputValue),
+      );
+      removeActive();
+      displayWords(filterWords);
+    });
+});
